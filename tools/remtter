@@ -1,0 +1,13 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib', '../lib';
+use lib 'extlib', '../extlib';
+use MT;
+
+my $app = MT->instance;
+if ( my $plugin = MT->component( 'Remtter' ) ) {
+    MT::Plugin::Remtter::remtter();
+}
+
+1;
