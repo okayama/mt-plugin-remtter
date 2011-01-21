@@ -34,6 +34,9 @@ my $plugin = new MT::Plugin::Remtter( {
         [ 'mail_to', { Scope => 'blog', Default => &_default_mail_to } ],
         [ 'mail_from', { Scope => 'blog', Default => &_default_mail_from } ],
         [ 'message_body', { Scope => 'blog', Default => &_default_message_body } ],
+        [ 'result_log', { Scope => 'blog', Default => 0 } ],
+        [ 'notification_by_direct_message', { Scope => 'blog', Default => 1 } ],
+        [ 'notification_by_mail', { Scope => 'blog', Default => 1 } ],
     ] ),
     l10n_class => 'MT::Remtter::L10N',
 } );
@@ -94,37 +97,46 @@ sub remtter {
                     push( @removed_ids, $screen_name );
                 }
             }
-            if ( @removed_ids ) {          
-                my $message = $plugin->translate( 'Removed by [_1]', join( ', ', @removed_ids ) );
-                _save_success_log( $message, $blog_id ); 
+            my $result_log = $plugin->get_config_value( 'result_log', $scope );
+            if ( @removed_ids ) {
+                if ( $result_log ) {
+                    my $message = $plugin->translate( 'Removed by [_1]', join( ', ', @removed_ids ) );
+                    _save_success_log( $message, $blog_id ); 
+                }
                 my %params = (
                     removed_ids => \@removed_ids,
-                ); 
-                if ( my $mail_to = $plugin->get_config_value( 'mail_to', $scope ) ) {
-                    my $mail_subject = $plugin->get_config_value( 'mail_subject', $scope );
-                    my $mail_body = $plugin->get_config_value( 'mail_body', $scope );
-                    my $mail_from = $plugin->get_config_value( 'mail_from', $scope );
-                    unless ( $mail_from ) {
-                        $mail_from = MT->config->EmailAddressMain;
+                );
+                if ( $plugin->get_config_value( 'notification_by_mail', $scope ) ) {
+                    if ( my $mail_to = $plugin->get_config_value( 'mail_to', $scope ) ) {
+                        my $mail_subject = $plugin->get_config_value( 'mail_subject', $scope );
+                        my $mail_body = $plugin->get_config_value( 'mail_body', $scope );
+                        my $mail_from = $plugin->get_config_value( 'mail_from', $scope );
+                        unless ( $mail_from ) {
+                            $mail_from = MT->config->EmailAddressMain;
+                        }
+                        $mail_subject = _build_tmpl( $mail_subject, $blog_id, \%params );
+                        $mail_body = _build_tmpl( $mail_body, $blog_id, \%params );
+                        my @mail_to = split( /\n/, $mail_to );
+                        my $to = join( ',', @mail_to );
+                        my %head = (   
+                            To => $to,
+                            From => $mail_from,
+                            Subject => $mail_subject,
+                        );
+                        MT::Mail->send( \%head, $mail_body );
                     }
-                    $mail_subject = _build_tmpl( $mail_subject, $blog_id, \%params );
-                    $mail_body = _build_tmpl( $mail_body, $blog_id, \%params );
-                    my @mail_to = split( /\n/, $mail_to );
-                    my $to = join( ',', @mail_to );
-                    my %head = (   
-                        To => $to,
-                        From => $mail_from,
-                        Subject => $mail_subject,
-                    );
-                    MT::Mail->send( \%head, $mail_body );
                 }
-                if ( my $message_body = $plugin->get_config_value( 'message_body', $scope ) ) {
-                    $message_body = _build_tmpl( $message_body, $blog_id, \%params );
-                    _send_direct_message_to_me( $message_body, $blog_id );
+                if ( $plugin->get_config_value( 'notification_by_direct_message', $scope ) ) {
+                    if ( my $message_body = $plugin->get_config_value( 'message_body', $scope ) ) {
+                        $message_body = _build_tmpl( $message_body, $blog_id, \%params );
+                        _send_direct_message_to_me( $message_body, $blog_id );
+                    }
                 }
             } else {
-                my $message = $plugin->translate( 'No remover. Follower: [_1]', scalar @follower_ids );
-                _save_success_log( $message, $blog_id );
+                if ( $result_log ) {
+                    my $message = $plugin->translate( 'No remover. Follower: [_1]', scalar @follower_ids );
+                    _save_success_log( $message, $blog_id );
+                }
             }
             $plugin->set_config_value( 'last_modified', time, $scope );
             $plugin->set_config_value( 'last_follower_ids', join( ',', @follower_ids ), $scope );

@@ -17,13 +17,17 @@ our %Lexicon = (
     'Authentication failed' => '認証に失敗しました',
     'Settings for Twitter' => 'Twitter に関する設定',
     'Settings for mail' => 'メールに関する設定',
+    'Notification by mail' => 'メールによる通知',
+    'Settings for log' => 'ログに関する設定',
     'Settings for direct message' => 'ダイレクトメッセージに関する設定',
+    'Notification by direct message' => 'ダイレクトメッセージに<br />よる通知',
+    'Enable' => '有効',
     'Message body' => '本文',
     'Mail subject' => '件名',
     'Mail body' => '本文',
     'Mail from' => '送信元',
     'Mail to' => '送信先',
-    'One setting per line' => '一行にひとつ入力してください',
+    'One setting per line' => '一行につきひとつの設定を入力してください',
     'No remover. Follower: [_1]' => 'リムーブされていません(フォロワー数: [_1])。',
     'Others' => 'その他',
     'Status(at last task)' => '前回の実行時のステータス',
@@ -33,6 +37,9 @@ our %Lexicon = (
     'Remtter Task' => 'Remtter のタスク',
     'Error get followers ids: [_1]' => 'フォロワー ID が取得できませんでした: [_1]',
     'Error get screen name of user [_1]: [_2]' => 'ユーザ ID [_1] のユーザ名が取得できませんでした: [_2]',
+    'Result log' => '実行ログ',
+    'Loging' => 'ログを残す',
+    'If this setting is on, write to log about being removed or followers num, per execute.' => 'チェックすると、実行の度にフォロワー数またはリムーブされたことをログに残します。',
 );
 
 1;

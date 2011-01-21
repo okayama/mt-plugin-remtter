@@ -22,6 +22,11 @@
 <input type="hidden" name="last_follower_ids" value="<mt:var name="last_follower_ids" escape="html">">
 <h3 class="mediumHeader"><__trans phrase="Settings for mail"></h3>
 <mtapp:setting
+    id="notification_by_mail"
+    label="<__trans phrase="Notification by mail">">
+    <input type="checkbox" name="notification_by_mail"<mt:if name="notification_by_mail"> checked="checked"</mt:if> /> <__trans phrase="Enable">
+</mtapp:setting>
+<mtapp:setting
     id="mail_subject"
     label="<__trans phrase="Mail subject">">
     <input type="text" class="text" name="mail_subject" value="<mt:var name="mail_subject" escape="html">" />
@@ -44,9 +49,21 @@
 </mtapp:setting>
 <h3 class="mediumHeader"><__trans phrase="Settings for direct message"></h3>
 <mtapp:setting
+    id="notification_by_direct_message"
+    label="<__trans phrase="Notification by direct message">">
+    <input type="checkbox" name="notification_by_direct_message"<mt:if name="notification_by_direct_message"> checked="checked"</mt:if> /> <__trans phrase="Enable">
+</mtapp:setting>
+<mtapp:setting
     id="message_body"
     label="<__trans phrase="Message body">">
     <textarea name="message_body" id="message_body"><mt:var name="message_body" escape="html"></textarea>
+</mtapp:setting>
+<h3 class="mediumHeader"><__trans phrase="Settings for log"></h3>
+<mtapp:setting
+    id="result_log"
+    label="<__trans phrase="Result log">">
+    <input type="checkbox" name="result_log"<mt:if name="result_log"> checked="checked"</mt:if> /> <__trans phrase="Loging">
+    <p class="hint"><__trans phrase="If this setting is on, write to log about being removed or followers num, per execute."></p>
 </mtapp:setting>
 <h3 class="mediumHeader"><__trans phrase="Others"></h3>
 <h4 class="subHeader"><__trans phrase="Status(at last task)"></h4>
@@ -55,3 +72,4 @@
     label="<__trans phrase="Follower number">">
     <mt:var name="follower_num" escape="html">
 </mtapp:setting>
+
