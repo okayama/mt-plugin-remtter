@@ -33,6 +33,7 @@ our %Lexicon = (
     'Status(at last task)' => '前回の実行時のステータス',
     'Follower number' => 'フォロワー数',
     'Removed by [_1]' => '[_1] にリムーブされました。',
+    '[_1] was(were) suspended' => '[_1] は停止されました。',
     'Send direct message success: [_1]' => 'ダイレクトメッセージを送信しました: [_1]',
     'Remtter Task' => 'Remtter のタスク',
     'Error get followers ids: [_1]' => 'フォロワー ID が取得できませんでした: [_1]',

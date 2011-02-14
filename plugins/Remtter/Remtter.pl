@@ -90,21 +90,30 @@ sub remtter {
         }
         if ( my $follower_ids = _get_follower_ids( $blog_id ) ) {
             push( my @follower_ids, ( ref $follower_ids eq 'ARRAY' ? @$follower_ids : $follower_ids ) );
-            my @removed_ids;
+            my ( @removed_ids, @suspended_ids );
             for my $last_follower_id ( @last_follower_ids ) {
                 unless ( grep { $_ eq $last_follower_id } @follower_ids ) {
-                    my $screen_name = _get_screen_name( $blog_id, $last_follower_id );
-                    push( @removed_ids, $screen_name );
+                    if ( my $screen_name = _get_screen_name( $blog_id, $last_follower_id ) ) {
+                        push( @removed_ids, $screen_name );
+                    } else {
+                        push( @suspended_ids, $last_follower_id );
+                    }
                 }
             }
             my $result_log = $plugin->get_config_value( 'result_log', $scope );
-            if ( @removed_ids ) {
+            if ( @removed_ids || @suspended_ids ) {
                 if ( $result_log ) {
-                    my $message = $plugin->translate( 'Removed by [_1]', join( ', ', @removed_ids ) );
-                    _save_success_log( $message, $blog_id ); 
+                    if ( @removed_ids ) {
+                        my $message = $plugin->translate( 'Removed by [_1]', join( ', ', @removed_ids ) );
+                        _save_success_log( $message, $blog_id );
+                    } else {
+                        my $message = $plugin->translate( '[_1] was(were) suspended', join( ', ', @suspended_ids ) );
+                        _save_success_log( $message, $blog_id );
+                    }
                 }
                 my %params = (
                     removed_ids => \@removed_ids,
+                    suspended_ids => \@suspended_ids,
                 );
                 if ( $plugin->get_config_value( 'notification_by_mail', $scope ) ) {
                     if ( my $mail_to = $plugin->get_config_value( 'mail_to', $scope ) ) {
@@ -457,12 +466,20 @@ sub _default_mail_subject {
 
 sub _default_mail_body {
     return <<'MTML';
+<mt:if name="removed_ids">
 Removed following ids...
 
 <mt:loop name="removed_ids">
 http://twitter.com/<mt:var name="__value__">
 </mt:loop>
 
+</mt:if>
+<mt:if name="suspended_ids">
+Following user ID was suspended...
+
+<mt:loop name="suspended_ids" glue=", "><mt:var name="__value__"></mt:loop>
+
+</mt:if>
 -- 
 Remtter - Movable Type Plugin
 MTML
@@ -481,7 +498,17 @@ sub _default_mail_from {
 
 sub _default_message_body {
     return <<'MTML';
-[Remtter] Removed by <mt:loop name="removed_ids" glue=", ">@<mt:var name="__value__"></mt:loop>
+[Remtter]
+<mt:if name="removed_ids">
+following is remove from your friends.
+
+Removed by <mt:loop name="removed_ids" glue=", ">@<mt:var name="__value__"></mt:loop>
+</mt:if>
+<mt:if name="suspended_ids">
+Following user ID was suspended...
+
+<mt:loop name="suspended_ids" glue=", "><mt:var name="__value__"></mt:loop>
+</mt:if>
 MTML
 }
 
