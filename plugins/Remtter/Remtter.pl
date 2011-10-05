@@ -244,7 +244,7 @@ sub _send_direct_message_to_me {
     my ( $message, $blog_id ) = @_;
     return unless $message;
     my $user_id = _get_account_information( 'id', $blog_id ) or return;
-    my $screen_name = _get_account_information( 'name', $blog_id ) or return;
+    my $screen_name = _get_account_information( 'screen_name', $blog_id ) or return;
     my $request_url = 'http://api.twitter.com/1/direct_messages/new.xml';
     my $request_method = 'POST';
     my %extra_params = (
