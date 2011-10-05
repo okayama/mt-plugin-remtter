@@ -202,7 +202,7 @@ sub _get_screen_name {
 
 sub _get_follower_ids {
     my ( $blog_id ) = @_;
-    my $request_url = 'http://api.twitter.com/followers/ids.xml';
+    my $request_url = 'http://api.twitter.com/1/followers/ids.xml';
     my $request_method = 'GET';
     if ( my $response = _oauth_request( $blog_id, $request_url, $request_method ) ) {
         unless ( $response->is_success ) {
