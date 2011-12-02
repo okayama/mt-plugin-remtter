@@ -212,7 +212,7 @@ sub _get_follower_ids {
         }
         if ( my $xml = $response->content ) {
             my $data = XMLin( $xml );
-            if ( my $ids = $data->{ id } ) {
+            if ( my $ids = $data->{ ids }->{ id } ) {
                 return $ids;
             }
         }
