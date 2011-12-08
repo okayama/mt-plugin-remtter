@@ -75,6 +75,7 @@ sub _blog_config_template {
         my $last_follower_ids = $plugin->get_config_value( 'last_follower_ids', $scope );
         my @last_follower_ids = split( ',', $last_follower_ids );
 	    $tmpl->param( 'follower_num' => scalar @last_follower_ids );
+	    $tmpl->param( 'last_follower_ids_loop' => \@last_follower_ids );
     }
 	return $tmpl; 
 }
@@ -114,6 +115,7 @@ sub remtter {
                 my %params = (
                     removed_ids => \@removed_ids,
                     suspended_ids => \@suspended_ids,
+                    followers_count => scalar @follower_ids,
                 );
                 if ( $plugin->get_config_value( 'notification_by_mail', $scope ) ) {
                     if ( my $mail_to = $plugin->get_config_value( 'mail_to', $scope ) ) {
@@ -212,6 +214,7 @@ sub _get_follower_ids {
         }
         if ( my $xml = $response->content ) {
             my $data = XMLin( $xml );
+#            if ( my $ids = $data->{ id } ) {
             if ( my $ids = $data->{ ids }->{ id } ) {
                 return $ids;
             }
@@ -286,7 +289,7 @@ sub _oauth_request {
 	my $response;
 	eval { $response = $nos->make_restricted_request( $request_url, $request_method, %$extra_params ); };
 	if ( $@ ) {
-		_save_error_log( $plugin->trans_error( "Failed to get response from [_1], ([_2])", "twitter", $@ ) );
+		_save_error_log( $plugin->translate( "Failed to get response from [_1], ([_2])", "twitter", $@ ) );
 		return 0;
 	}
 	unless ( $response->is_success ) {
@@ -470,8 +473,7 @@ sub _default_mail_body {
 Removed following ids...
 
 <mt:loop name="removed_ids">
-http://twitter.com/<mt:var name="__value__">
-</mt:loop>
+http://twitter.com/<mt:var name="__value__"></mt:loop>
 
 </mt:if>
 <mt:if name="suspended_ids">
@@ -480,6 +482,8 @@ Following user ID was suspended...
 <mt:loop name="suspended_ids" glue=", "><mt:var name="__value__"></mt:loop>
 
 </mt:if>
+Followers: <mt:var name="followers_count">
+
 -- 
 Remtter - Movable Type Plugin
 MTML
@@ -509,6 +513,7 @@ Following user ID was suspended...
 
 <mt:loop name="suspended_ids" glue=", "><mt:var name="__value__"></mt:loop>
 </mt:if>
+Followers: <mt:var name="followers_count">
 MTML
 }
 
