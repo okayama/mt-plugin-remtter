@@ -70,27 +70,6 @@
 <mtapp:setting
     id="follower_num"
     label="<__trans phrase="Follower number">">
-    <p><mt:var name="follower_num" escape="html"></p>
-    <div id="data-last_follower_ids-switch-open">
-        <p><a href="javascript:void(0);" onclick="
-            jQuery( '#data-last_follower_ids' ).css( 'display', 'block' );
-            jQuery( '#data-last_follower_ids-switch-close' ).css( 'display', 'block' );
-            jQuery( '#data-last_follower_ids-switch-open' ).css( 'display', 'none' );
-        "><__trans phrase="Show"></a></p>
-    </div>
-    <div id="data-last_follower_ids-switch-close" style="display:none;">
-        <p><a href="javascript:void(0);" onclick="
-            jQuery( '#data-last_follower_ids' ).css( 'display', 'none' );
-            jQuery( '#data-last_follower_ids-switch-close' ).css( 'display', 'none' );
-            jQuery( '#data-last_follower_ids-switch-open' ).css( 'display', 'block' );
-        "><__trans phrase="Close"></a></p>
-    </div>
-    <div id="data-last_follower_ids" style="display:none;">
-    <mt:loop name="last_follower_ids_loop">
-        <mt:if name="__first__"><ul></mt:if>
-            <li><a href="http://api.twitter.com/1/users/show.xml?id=<mt:var name="__value__" escape="html">" target="_blank"><mt:var name="__value__" escape="html"></a></li>
-        <mt:if name="__last__"></ul></mt:if>
-    </mt:loop>
-    </div>
+    <mt:var name="follower_num" escape="html">
 </mtapp:setting>
 
