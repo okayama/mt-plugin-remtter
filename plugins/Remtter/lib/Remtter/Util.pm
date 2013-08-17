@@ -127,8 +127,6 @@ sub oauth_request {
     }
     $http_request->content_type( 'application/x-www-form-urlencoded' ); # Required in API version 1.1
     my $response = $ua->request( $http_request );
-use Data::Dumper;
-MT->log( 'response: ' . Dumper $response );
 
 	unless ( $response->is_success ) {
 	    return $plugin->trans_error( "Failed to get response from [_1], ([_2])", "twitter", $response->status_line );
