@@ -1,0 +1,48 @@
+id: Remtter
+name: Remtter
+key: remtter
+version: 1.1
+description: <__trans phrase='Available Remtter.'>
+author_name: okayama
+author_link: http://weeeblog.net/
+blog_config_template: remtter_config_blog.tmpl
+settings:
+    consumer_key:
+        default: gmoaaG9a5nc7wQ3g4a2qQ
+        scope: system
+    consumer_secret:
+        default: PWPS20AKZNcJqph3z1hEo1cOqnVVScViG7mQTeih0
+        scope: system
+    access_token:
+    access_token_secret:
+    last_updated:
+    last_follower_ids:
+    mail_subject:
+        default:
+    mail_body:
+        default:
+    mail_to:
+        default:
+    mail_from:
+        default:
+    message_body:
+        default:
+    result_log:
+        default: 0
+    notification_by_direct_message:
+        default: 1
+    notification_by_mail:
+        default: 1
+l10n_class: Remtter::L10N
+applications:
+    cms:
+        methods:
+            remtter_oauth: $remtter::Remtter::CMS::_mode_remtter_oauth
+            remtter_get_access_token: $remtter::Remtter::CMS::_mode_remtter_get_access_token
+tasks:
+    remtter:
+        label: Remtter Task
+        frequency: 5
+        code: $remtter::Remtter::Tasks::remtter
+callbacks:
+    MT::App::CMS::template_source.remtter_config_blog: $remtter::Remtter::Callbacks::_cb_ts_remtter_config_blog
